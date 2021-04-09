@@ -76,23 +76,59 @@ public class Client_Schedule_Job {
 
             //Send REDY
 
+            String REDY ="REDY";
+
+            bout.write(REDY.getBytes());
+
+            System.out.println("REDY has been sent to server");
+
+            bout.flush();
+
 
 
             //Recieve reply from REDY
+
+            byte[] serverReplyREDY = new byte[32];
+
+            bin.read(serverReplyREDY);
+
+            String ServerReplyREDY = new String(serverReplyREDY, StandardCharsets.UTF_8);
+
+            System.out.println("RCVD in reponse to REDY: " +ServerReplyREDY);
 
 
 
             //Send GETS ALL
 
+            String GETS_ALL ="GETS All";
+
+            bout.write(GETS_ALL.getBytes());
+
+            System.out.println("GETS ALL has been sent to server");
+
+            bout.flush();
+
 
 
             //Recieves reply from GETS ALL
 
+            byte[] serverReplyGETS = new byte[32];
 
+            bin.read(serverReplyGETS);
+
+            String ServerReplyGETS = new String(serverReplyGETS, StandardCharsets.UTF_8);
+
+            System.out.println("RCVD in reponse to GETS ALL: " +ServerReplyGETS);
+
+            
 
             //Send OK
 
+            String OK ="OK";
 
+            bout.write(OK.getBytes());
+
+            bout.flush();
 
             
 
