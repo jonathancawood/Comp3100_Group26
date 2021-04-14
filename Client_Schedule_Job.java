@@ -25,6 +25,16 @@ public class Client_Schedule_Job {
         }
     }
 
+    public String MsgConverter (byte[] x, BufferedInputStream bin){
+        try{
+            bin.read(x);
+            String reply = new String(x,StandardCharsets.UTF_8);
+            return;
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
     public void MsgReciever (byte[] x, BufferedInputStream bin){
         try{
             bin.read(x);
@@ -47,7 +57,9 @@ public class Client_Schedule_Job {
             BufferedInputStream bin = new BufferedInputStream(din);
 
             Client_Schedule_Job cjs = new Client_Schedule_Job();
-        
+
+            System.out.println("Connected");
+
             //Send HELO
             cjs.MsgSender("HELO", bout);
 
@@ -70,24 +82,26 @@ public class Client_Schedule_Job {
             cjs.MsgSender("GETS All", bout);
 
             //Recieves reply from GETS ALL
-            byte[] serverReplyGETS = new byte[32];
-            bin.read(serverReplyGETS);
-            String ServerReplyGETS = new String(serverReplyGETS, StandardCharsets.UTF_8);
-            System.out.println("RCVD in reponse to GETS ALL: " +ServerReplyGETS);
+            String reply = new String(cjs.MsgConverter(new byte[32], bin));
+            System.out.println("RCVD Response: "+ reply);
+            String[] temp = reply.split(" ");
+            System.out.println("Temp 1 is: "+temp[1]);
+            System.out.println("Temp 2 is: "+temp[2]);
             
             //Send OK (after GETS All)
             cjs.MsgSender("OK", bout);
 
+            cjs.MsgSender("OK", bout);
+
             //get the server reply and convert to string spliting along the way
-            String[] temp = ServerReplyGETS.split(" ");
-            byte[] serverReplyGETS1 = new byte[Integer.parseInt(temp[1])*Integer.parseInt(temp[2])];
-            String ServerReplyGETS1 = new String(serverReplyGETS1, StandardCharsets.UTF_8);
+            String Reply = new String();
+            Reply = cjs.MsgConverter(new byte[552], bin); // need to make this temp1 times temp 2
             
-            //convert the strings intro an array of strings
-            String[] arrofstr = ServerReplyGETS1.split("\n");   
+            //split each string from the total recieved string (individual servers per string)
+            String[] array = Reply.split("\n");
 
             // go throught the array of strings and for each reply create a server and import the right values into the right fields, repeating this for all servers in the reply
-            for(String server: arrofstr){
+            for(String server: array){
                 String[] indiServer = server.split(" ");
                 Servers Indi = new Servers();
                 Indi.serverName= indiServer[0];
@@ -98,12 +112,13 @@ public class Client_Schedule_Job {
                 Indi.mem = Integer.parseInt(indiServer[5]);
                 Indi.disk = Integer.parseInt(indiServer[6]);
                 cjs.serverList.add(Indi);
-            }
+            }  
+
             //send ok to the server
             cjs.MsgSender("OK", bout);
 
             //The reply will be infomation data from the server
-            
+
             bout.close();
             s.close();
         }catch (Exception e){
