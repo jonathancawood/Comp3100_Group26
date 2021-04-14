@@ -2,6 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 //import java.util.ArrayList;
+
 class Servers{
     String serverName;
     int serverID;
@@ -11,20 +12,32 @@ class Servers{
     int mem;
     int disk;
 }
-public String MsgSender (String , BufferedOutputStream bout){
-    try{
-        bout.write(s.getBytes());
-        System.out.println(s + " has been sent to server");
-        bout.flush();
-        return;
-    }catch (Exception e){
-        System.out.println(e);
-    }
-
-}
 
 public class Client_Schedule_Job {
+    public void MsgSender (String s, BufferedOutputStream bout){
+        try{
+            bout.write(s.getBytes());
+            System.out.println(s + " has been sent to server");
+            bout.flush();
+            return;
+        }catch (Exception e){
+           System.out.println(e);
+        }
+    }
+
+    public void MsgReciever (byte[] x, BufferedInputStream bin){
+        try{
+            bin.read(x);
+            String reply = new String(x,StandardCharsets.UTF_8);
+            System.out.println("RCVD Response: "+ reply);
+            return;
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
     public ArrayList<Servers> serverList= new ArrayList<Servers>();
+   
     public static void main(String args[]){
         try{
             Socket s = new Socket("127.0.0.1", 50000);
@@ -32,33 +45,26 @@ public class Client_Schedule_Job {
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
             BufferedOutputStream bout = new BufferedOutputStream(dout);
             BufferedInputStream bin = new BufferedInputStream(din);
+
+            Client_Schedule_Job cjs = new Client_Schedule_Job();
         
             //Send HELO
             cjs.MsgSender("HELO", bout);
 
             //Receive reply from HELO
-            byte[] serverReplyHELO = new byte[32];
-            bin.read(serverReplyHELO);
-            String ServerReplyHELO = new String(serverReplyHELO, StandardCharsets.UTF_8);
-            System.out.println("RCVD in response to HELO: "+ ServerReplyHELO);
+            cjs.MsgReciever(new byte[32], bin);
             
             //Send AUTH
             cjs.MsgSender("AUTH Jono", bout);
 
             //Recieve reply from AUTH
-            byte[] serverReplyAUTH = new byte[32];
-            bin.read(serverReplyAUTH);
-            String ServerReplyAUTH = new String(serverReplyAUTH, StandardCharsets.UTF_8);
-            System.out.println("RCVD in response to AUTH: " + ServerReplyAUTH);
+            cjs.MsgReciever(new byte[32], bin);
 
             //Send REDY
             cjs.MsgSender("REDY", bout);
 
             //Recieve reply from REDY
-            byte[] serverReplyREDY = new byte[32];
-            bin.read(serverReplyREDY);
-            String ServerReplyREDY = new String(serverReplyREDY, StandardCharsets.UTF_8);
-            System.out.println("RCVD in reponse to REDY: " +ServerReplyREDY);
+            cjs.MsgReciever(new byte[32], bin);
 
             //Send GETS ALL
             cjs.MsgSender("GETS All", bout);
@@ -79,7 +85,6 @@ public class Client_Schedule_Job {
             
             //convert the strings intro an array of strings
             String[] arrofstr = ServerReplyGETS1.split("\n");   
-            Client_Schedule_Job cjs = new Client_Schedule_Job();
 
             // go throught the array of strings and for each reply create a server and import the right values into the right fields, repeating this for all servers in the reply
             for(String server: arrofstr){
@@ -98,6 +103,7 @@ public class Client_Schedule_Job {
             cjs.MsgSender("OK", bout);
 
             //The reply will be infomation data from the server
+            
             bout.close();
             s.close();
         }catch (Exception e){
