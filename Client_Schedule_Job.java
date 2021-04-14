@@ -11,6 +11,17 @@ class Servers{
     int mem;
     int disk;
 }
+public String MsgSender (String , BufferedOutputStream bout){
+    try{
+        bout.write(s.getBytes());
+        System.out.println(s + " has been sent to server");
+        bout.flush();
+        return;
+    }catch (Exception e){
+        System.out.println(e);
+    }
+
+}
 
 public class Client_Schedule_Job {
     public ArrayList<Servers> serverList= new ArrayList<Servers>();
@@ -23,10 +34,7 @@ public class Client_Schedule_Job {
             BufferedInputStream bin = new BufferedInputStream(din);
         
             //Send HELO
-            String HELO ="HELO";
-            bout.write(HELO.getBytes());
-            System.out.println("HELO has been sent to server");
-            bout.flush();
+            cjs.MsgSender("HELO", bout);
 
             //Receive reply from HELO
             byte[] serverReplyHELO = new byte[32];
@@ -35,10 +43,7 @@ public class Client_Schedule_Job {
             System.out.println("RCVD in response to HELO: "+ ServerReplyHELO);
             
             //Send AUTH
-            String AUTH = "AUTH BLANK";
-            bout.write(AUTH.getBytes());
-            System.out.println("AUTH has been sent to server");
-            bout.flush();
+            cjs.MsgSender("AUTH Jono", bout);
 
             //Recieve reply from AUTH
             byte[] serverReplyAUTH = new byte[32];
@@ -47,10 +52,7 @@ public class Client_Schedule_Job {
             System.out.println("RCVD in response to AUTH: " + ServerReplyAUTH);
 
             //Send REDY
-            String REDY ="REDY";
-            bout.write(REDY.getBytes());
-            System.out.println("REDY has been sent to server");
-            bout.flush();
+            cjs.MsgSender("REDY", bout);
 
             //Recieve reply from REDY
             byte[] serverReplyREDY = new byte[32];
@@ -59,10 +61,7 @@ public class Client_Schedule_Job {
             System.out.println("RCVD in reponse to REDY: " +ServerReplyREDY);
 
             //Send GETS ALL
-            String GETS_ALL ="GETS All";
-            bout.write(GETS_ALL.getBytes());
-            System.out.println("GETS ALL has been sent to server");
-            bout.flush();
+            cjs.MsgSender("GETS All", bout);
 
             //Recieves reply from GETS ALL
             byte[] serverReplyGETS = new byte[32];
@@ -70,11 +69,9 @@ public class Client_Schedule_Job {
             String ServerReplyGETS = new String(serverReplyGETS, StandardCharsets.UTF_8);
             System.out.println("RCVD in reponse to GETS ALL: " +ServerReplyGETS);
             
-            //Send OK
-            String OK ="OK";
-            bout.write(OK.getBytes());
-            bout.flush();
-            
+            //Send OK (after GETS All)
+            cjs.MsgSender("OK", bout);
+
             //get the server reply and convert to string spliting along the way
             String[] temp = ServerReplyGETS.split(" ");
             byte[] serverReplyGETS1 = new byte[Integer.parseInt(temp[1])*Integer.parseInt(temp[2])];
@@ -98,11 +95,8 @@ public class Client_Schedule_Job {
                 cjs.serverList.add(Indi);
             }
             //send ok to the server
-            bout.write(OK.getBytes());
-            System.out.println("OK has been send to server again");
-            bout.flush();
-            
-            
+            cjs.MsgSender("OK", bout);
+
             //The reply will be infomation data from the server
             bout.close();
             s.close();
