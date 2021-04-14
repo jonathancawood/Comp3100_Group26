@@ -77,7 +77,7 @@ public class Client_Schedule_Job {
             
             //get the server reply and convert to string spliting along the way
             String[] temp = ServerReplyGETS.split(" ");
-            byte[] serverReplyGETS1 = new byte[Integer.parseInt(temp[1])*Integer.parseInt(temp[2])*Integer.parseInt(temp[3])*Integer.parseInt(temp[4])*Integer.parseInt(temp[5])*Integer.parseInt(temp[6])];
+            byte[] serverReplyGETS1 = new byte[Integer.parseInt(temp[1])*Integer.parseInt(temp[2])];
             String ServerReplyGETS1 = new String(serverReplyGETS1, StandardCharsets.UTF_8);
             
             //convert the strings intro an array of strings
