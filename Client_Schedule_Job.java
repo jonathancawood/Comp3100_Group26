@@ -113,13 +113,30 @@ public class Client_Schedule_Job {
                 Indi.disk = Integer.parseInt(indiServer[6]);
                 cjs.serverList.add(Indi);
             }  
+            // to see if the server response is "."
+            cjs.MsgReciever(new byte[1], bin);
+            
+            String Largest = "SCHD 100 "; //have to add the largest server details
+            System.out.println("Largest server is: "+ Largest);
+            cjs.MsgSender(Largest, bout);
 
-            //send ok to the server
-            cjs.MsgSender("OK", bout);
+            //SCHD reply 
+            cjs.MsgReciever(new byte[100], bin);
+            
+            //sends REDY
+            cjs.MsgSender("REDY", bout);
 
-            //The reply will be infomation data from the server
+            cjs.MsgReciever(new byte[32], bin);
 
+            //tell the server u are ready to quit
+            cjs.MsgSender("QUIT", bout);
+
+            //read reply
+            String REPLY = new String(cjs.MsgConverter(new byte[32], bin));
+            System.out.println("The server wants to: "+ REPLY);
+              if(REPLY.equals("QUIT")){
             bout.close();
+            dout.close();
             s.close();
         }catch (Exception e){
             System.out.println(e);
