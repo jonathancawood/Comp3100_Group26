@@ -5,4 +5,4 @@ This repository contains our group client-side job dispatcher simulator which wa
 **Group members**
 
 * Jonathan Cawood (45887454)
-* Carlos Larin (45942854)
+* Carlos Larino (45942854)
