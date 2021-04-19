@@ -102,18 +102,19 @@ public class Client_Schedule_Job {
             String Reply = new String(cjs.MsgConverter(new byte[num], bin));        //call the msg convertor function and story the reply in a string
             String[] array = Reply.split("\n");                                     //create a string array called array and fill with the server response but split on each new line 
 
-            for(String server: array){                                              
-            String[] indiServer = server.split(" ");                                
-                Servers Indi = new Servers();
-                Indi.serverName= indiServer[0];
-                Indi.serverID = Integer.parseInt(indiServer[1]);
-                Indi.state = indiServer[2];
-                Indi.currStartTime = Integer.parseInt(indiServer[3]);
-                Indi.cores = Integer.parseInt(indiServer[4]);
-                Indi.mem = Integer.parseInt(indiServer[5]);
-                Indi.disk = Integer.parseInt(indiServer[6]);
-                cjs.serverList.add(Indi);
+            for(String server: array){                                              // Creation of a new server list to find specific individual server attributes
+            String[] indiServer = server.split(" ");                                // such as coreCount. Split servers into individual servers
+                Servers tempIndividualServer = new Servers();                       // create a temporary server list to input any attribute to the server
+                tempIndividualServer.serverName= indiServer[0];                     
+                tempIndividualServer.serverID = Integer.parseInt(indiServer[1]);
+                tempIndividualServer.state = indiServer[2];
+                tempIndividualServer.currStartTime = Integer.parseInt(indiServer[3]);
+                tempIndividualServer.cores = Integer.parseInt(indiServer[4]);
+                tempIndividualServer.mem = Integer.parseInt(indiServer[5]);
+                tempIndividualServer.disk = Integer.parseInt(indiServer[6]);
+                cjs.serverList.add(tempIndividualServer);                           // Add attributes into the array list and repeat the steps with the next servers
             }
+
 
             for(Servers serverToInspect: cjs.serverList){                         //for servers in serverlist
                 if(cjs.coreCount < serverToInspect.cores){                        //check the severtoinspects.core is larger the the corecount
@@ -122,8 +123,8 @@ public class Client_Schedule_Job {
                 }
             }
             
-            //send the SCHD
-            String Largest = "SCHD 110 " ;//+ cjs.biggestServer.serverName + " " + Integer.toString(cjs.biggestServer.serverID)+ " " + cjs.biggestServer.state + " " +Integer.toString(cjs.biggestServer.currStartTime) + " " +Integer.toString(cjs.biggestServer.cores) + " " +Integer.toString(cjs.biggestServer.mem) + " " +Integer.toString(cjs.biggestServer.disk) ;
+            //send the SCHD 
+            String Largest = "SCHD 110 "; //+ cjs.biggestServer.serverName + " " + Integer.toString(cjs.biggestServer.serverID)+ " " + cjs.biggestServer.state + " " +Integer.toString(cjs.biggestServer.currStartTime) + " " +Integer.toString(cjs.biggestServer.cores) + " " +Integer.toString(cjs.biggestServer.mem) + " " +Integer.toString(cjs.biggestServer.disk) ;
             System.out.println ("Largest server is: " + Largest);       //print the largest server details
             cjs.MsgSender(Largest, bout);                               //call msg sender function with th input of the string largest 
 
